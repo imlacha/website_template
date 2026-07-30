@@ -1,0 +1,18 @@
+/* =============================================================
+   styles.css — 全域樣式的目錄
+   -------------------------------------------------------------
+   這裡不寫任何規則，只負責決定載入順序。要改東西請進對應的檔案：
+
+     styles/tokens.css       顏色、圓角、陰影變數  → 想換配色改這裡
+     styles/typography.css   字體、字級、文字動畫  → 想改字或動畫改這裡
+     styles/base.css         重置、草原背景、input/button 預設
+     styles/components.css   .card / .btn-* / .status-badge / .data-table
+
+   順序有意義：tokens 先定義變數，後面的檔案才取得到值。
+   字體檔本身由 index.html 的 <link> 載入。
+   ============================================================= */
+
+@import './styles/tokens.css';
+@import './styles/typography.css';
+@import './styles/base.css';
+@import './styles/components.css';

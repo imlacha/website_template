@@ -1,0 +1,118 @@
+<div class="mgmt-wrapper">
+  <app-page-header title="訂單管理" subtitle="處理出貨進度、追蹤每一筆交易">
+    <button (click)="loadOrders()" class="btn-outline btn-refresh">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+      </svg>
+      重新整理
+    </button>
+  </app-page-header>
+
+  <!-- 篩選列：一排放在表格上方，同時控制整張表 -->
+  <div class="toolbar">
+    <div class="filter-tabs" role="group" aria-label="依訂單狀態篩選">
+      <button
+        type="button"
+        class="filter-tab"
+        [class.active]="filterStatus() === null"
+        [attr.aria-pressed]="filterStatus() === null"
+        (click)="setFilter(null)"
+      >全部 <span class="tab-count">{{ orders().length }}</span></button>
+
+      @for (s of statuses; track s) {
+        <button
+          type="button"
+          class="filter-tab"
+          [class.active]="filterStatus() === s"
+          [attr.aria-pressed]="filterStatus() === s"
+          (click)="setFilter(s)"
+        >
+          {{ statusMeta[s].label }} <span class="tab-count">{{ counts()[s] }}</span>
+        </button>
+      }
+    </div>
+
+    <input
+      type="search"
+      class="toolbar-search"
+      [ngModel]="keyword()"
+      (ngModelChange)="keyword.set($event)"
+      placeholder="搜尋訂單編號、商品或地址"
+      aria-label="搜尋訂單"
+    />
+  </div>
+
+  @if (loading()) {
+    <app-loading-state text="正在讀取訂單⋯⋯" />
+  } @else if (filteredOrders().length === 0) {
+    <app-empty-state text="找不到符合條件的訂單。" [boxed]="true" />
+  } @else {
+    <div class="table-card">
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>訂單</th>
+              <th>下單時間</th>
+              <th>商品明細</th>
+              <th>金額</th>
+              <th>收件地址</th>
+              <th>目前狀態</th>
+              <th>變更狀態</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of filteredOrders(); track order.id) {
+              <tr [class.row-updated]="justUpdated() === order.id">
+                <td class="num order-id">#{{ order.id }}</td>
+                <td class="num">{{ order.createdAt | date:'yyyy/MM/dd HH:mm' }}</td>
+                <td>
+                  <div class="items-summary">
+                    @for (item of order.items; track item.id) {
+                      <div class="summary-item">{{ item.quantity }} × {{ item.productName }}</div>
+                    }
+                    <span class="items-total">共 {{ itemCount(order) }} 件</span>
+                  </div>
+                </td>
+                <td class="num total-price">NT$ {{ order.totalAmount.toFixed(0) }}</td>
+                <td class="address-cell" [title]="order.shippingAddress">{{ order.shippingAddress }}</td>
+                <td><app-status-badge [status]="order.status" /></td>
+                <td>
+                  <!-- 選中狀態必須綁在 <option> 的 [selected] 上，不能綁 <select> 的 [value]：
+                       select 的屬性綁定會在 @for 建立 option 之前執行，
+                       那時找不到對應選項，瀏覽器會把值重設成空並改選第一個，
+                       導致每一列都顯示「待處理」。 -->
+                  <div class="status-change-cell">
+                    <select
+                      class="status-select"
+                      [disabled]="updatingId() === order.id"
+                      (change)="updateStatus(order, $event)"
+                      [attr.aria-label]="'變更訂單 ' + order.id + ' 的狀態'"
+                    >
+                      @for (s of statuses; track s) {
+                        <option [value]="s" [selected]="s === order.status">{{ statusMeta[s].label }}</option>
+                      }
+                    </select>
+
+                    @if (updatingId() === order.id) {
+                      <span class="row-hint">更新中⋯</span>
+                    } @else if (justUpdated() === order.id) {
+                      <span class="row-hint ok">✓ 已更新為{{ statusLabel(order.status) }}</span>
+                    }
+
+                    @if (rowError(); as e) {
+                      @if (e.id === order.id) {
+                        <span class="row-hint bad" role="alert">{{ e.message }}</span>
+                      }
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,60 @@
+<div class="detail-wrapper">
+  <a routerLink="/" class="back-nav-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+    回到商品列表
+  </a>
+
+  @if (loading()) {
+    <app-loading-state text="正在載入商品資料⋯⋯" />
+  } @else {
+    @if (product(); as prod) {
+      <div class="product-detail-card">
+        <div class="product-gallery">
+          <img [src]="prod.imageUrl || placeholder" [alt]="prod.name" class="detail-image" />
+        </div>
+
+        <div class="product-specs">
+          <span class="category-tag">{{ prod.categoryName }}</span>
+          <h1 class="title slide-in">{{ prod.name }}</h1>
+
+          <div class="price-stock-row">
+            <span class="price">NT$ {{ prod.price }}</span>
+            @if (prod.stock > 0) {
+              <app-status-badge tone="ok" [label]="'現貨 ' + prod.stock + ' 件'" />
+            } @else {
+              <app-status-badge tone="bad" label="暫時售完" />
+            }
+          </div>
+
+          <p class="description">{{ prod.description }}</p>
+
+          @if (prod.stock > 0) {
+            <div class="purchase-controls">
+              <div class="quantity-selector">
+                <button (click)="decrementQty()" class="qty-btn" [disabled]="quantity() <= 1" aria-label="減少數量">−</button>
+                <span class="qty-val">{{ quantity() }}</span>
+                <button (click)="incrementQty()" class="qty-btn" [disabled]="quantity() >= prod.stock" aria-label="增加數量">+</button>
+              </div>
+
+              <button
+                (click)="addToCart()"
+                [disabled]="addingToCart()"
+                class="btn-cart-add"
+              >
+                @if (addingToCart()) {
+                  加入中⋯
+                } @else {
+                  加入購物車
+                }
+              </button>
+            </div>
+          } @else {
+            <button disabled class="btn-cart-add">已售完</button>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,113 @@
+.page-title {
+  font-size: 24px;
+  margin-bottom: 22px;
+}
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: 26px;
+  align-items: start;
+}
+
+.checkout-form-section {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 26px;
+}
+
+.shipping-form h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  border-bottom: 2px dashed var(--line-soft);
+  padding-bottom: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.form-group textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.field-error {
+  color: var(--bad-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.btn-block {
+  width: 100%;
+  justify-content: center;
+  padding: 13px;
+  font-size: 15px;
+}
+
+.recap-card {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 100px;
+}
+
+.recap-card h3 {
+  font-size: 18px;
+  border-bottom: 2px dashed var(--line-soft);
+  padding-bottom: 12px;
+}
+
+.recap-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recap-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.item-qty-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-subtotal {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.recap-total-row {
+  color: var(--ink);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  border-top: 2px solid var(--line);
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 900px) {
+  .checkout-layout { grid-template-columns: 1fr; }
+  .recap-card { position: static; }
+}

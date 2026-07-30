@@ -1,0 +1,110 @@
+<!-- 草原橫幅：把「卡通草原」的氣氛放在第一眼 -->
+<section class="meadow-hero">
+  <!-- 文字放在半透明看板上，否則雲朵和草丘會把字吃掉 -->
+  <div class="hero-copy">
+    <!-- 逐字彈跳：每個字一個 .pop-char，延遲由 typography.css 的 nth-child 接力 -->
+    <h1 class="hero-title" aria-label="來草原上挑禮物吧！">
+      <span class="pop-char" aria-hidden="true">來</span><span class="pop-char" aria-hidden="true">草</span><span class="pop-char" aria-hidden="true">原</span><span class="pop-char" aria-hidden="true">上</span><span class="pop-char" aria-hidden="true">挑</span><span class="pop-char" aria-hidden="true">禮</span><span class="pop-char" aria-hidden="true">物</span><span class="pop-char" aria-hidden="true">吧</span><span class="pop-char" aria-hidden="true">！</span>
+    </h1>
+    <p class="hero-sub fade-up">吉依卡哇、小八貓和兔兔在草地上等你，一起把可愛帶回家 🌿</p>
+  </div>
+  <div class="hero-scene" aria-hidden="true">
+    <span class="cloud cloud-a"></span>
+    <span class="cloud cloud-b"></span>
+    <span class="flower flower-a"></span>
+    <span class="flower flower-b"></span>
+    <span class="flower flower-c"></span>
+  </div>
+</section>
+
+<div class="catalog-container">
+  <!-- 左側篩選 -->
+  <aside class="filters-sidebar">
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchKeyword"
+        (keyup.enter)="onSearch()"
+        placeholder="想找什麼呢？"
+        aria-label="搜尋商品"
+      />
+      <button (click)="onSearch()" class="search-btn" aria-label="搜尋">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="filter-section">
+      <h3>商品分類</h3>
+      <ul class="category-list">
+        <li
+          [class.active]="selectedCategory() === undefined"
+          (click)="selectCategory(undefined)"
+        >
+          全部商品
+        </li>
+        @for (cat of categories(); track cat.id) {
+          <li
+            [class.active]="selectedCategory() === cat.id"
+            (click)="selectCategory(cat.id)"
+          >
+            {{ cat.name }}
+          </li>
+        }
+      </ul>
+    </div>
+  </aside>
+
+  <!-- 右側商品區 -->
+  <section class="products-workspace">
+    <div class="workspace-header">
+      <h2>本日上架</h2>
+      <span class="results-count">共 {{ products().length }} 件商品</span>
+    </div>
+
+    @if (loading()) {
+      <app-loading-state text="正在草原上翻找商品⋯⋯" />
+    } @else {
+      @if (products().length === 0) {
+        <app-empty-state text="這片草原上還沒有符合條件的商品。" />
+      } @else {
+        <div class="products-grid stagger">
+          @for (prod of products(); track prod.id) {
+            <div [routerLink]="['/products', prod.id]" class="product-card">
+              <div class="product-image-container">
+                <img [src]="prod.imageUrl || placeholder" [alt]="prod.name" class="product-image" />
+                @if (prod.stock === 0) {
+                  <app-status-badge class="stock-badge" tone="bad" label="已售完" />
+                } @else if (prod.stock < 10) {
+                  <app-status-badge class="stock-badge" tone="warn" [label]="'僅剩 ' + prod.stock + ' 件'" />
+                }
+              </div>
+
+              <div class="product-info">
+                <span class="product-category">{{ prod.categoryName }}</span>
+                <h3 class="product-name">{{ prod.name }}</h3>
+                <p class="product-desc">{{ prod.description }}</p>
+
+                <div class="product-card-footer">
+                  <span class="product-price">NT$ {{ prod.price }}</span>
+                  <button
+                    [disabled]="prod.stock === 0 || addingToCartId() === prod.id"
+                    (click)="addToCart(prod, $event)"
+                    class="add-to-cart-btn"
+                  >
+                    @if (addingToCartId() === prod.id) {
+                      加入中⋯
+                    } @else {
+                      加入購物車
+                    }
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </section>
+</div>

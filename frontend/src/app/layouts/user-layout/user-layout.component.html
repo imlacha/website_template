@@ -1,0 +1,48 @@
+<header class="navbar">
+  <div class="nav-container">
+    <a routerLink="/" class="logo wiggle-hover">
+      <span class="logo-mark" aria-hidden="true">🌿</span>
+      <span class="logo-accent">吉依卡哇</span>專賣店
+    </a>
+    
+    <nav class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">首頁</a>
+      
+      @if (authService.isLoggedIn()) {
+        <a routerLink="/orders/history" routerLinkActive="active">我的訂單</a>
+        @if (authService.isAdmin()) {
+          <a routerLink="/admin/dashboard" class="admin-badge-link">管理員後台</a>
+        }
+      }
+    </nav>
+    
+    <div class="nav-actions">
+      @if (authService.isLoggedIn()) {
+        <a routerLink="/cart" class="cart-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+          </svg>
+          @if (cartService.cartItemsCount() > 0) {
+            <span class="cart-badge">{{ cartService.cartItemsCount() }}</span>
+          }
+        </a>
+        <span class="user-greeting">哈囉，{{ authService.currentUser()?.name }}</span>
+        <button (click)="logout()" class="btn-outline">登出</button>
+      } @else {
+        <a routerLink="/auth/login" class="btn-outline">會員登入</a>
+        <a routerLink="/auth/register" class="btn-primary">免費註冊</a>
+      }
+    </div>
+  </div>
+</header>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="footer">
+  <div class="footer-container">
+    <p>&copy; 2026 吉依卡哇專賣店</p>
+    <p class="footer-subtext">讓吉依卡哇、小八貓與兔兔陪伴您的每一天！</p>
+  </div>
+</footer>

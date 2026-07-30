@@ -1,0 +1,142 @@
+.page-title {
+  font-size: 24px;
+  margin-bottom: 22px;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+}
+
+.order-card-header {
+  background: var(--surface-sunk);
+  border-bottom: 2px dashed var(--line-soft);
+  padding: 16px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.order-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.order-id {
+  font-family: var(--font-heading);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.order-date {
+  color: var(--ink-muted);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.order-status-price {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.order-total {
+  font-family: var(--font-heading);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.order-card-body {
+  padding: 20px 22px;
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 26px;
+}
+
+.order-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.item-thumbnail {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: var(--grass-pale);
+  border: 2px solid var(--line);
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.item-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.item-name {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.item-qty-price {
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.order-shipping-info {
+  background: var(--surface-sunk);
+  border: 2px solid var(--line-soft);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 13px;
+  height: fit-content;
+}
+
+.order-shipping-info strong {
+  color: var(--ink);
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.order-shipping-info p {
+  color: var(--ink-soft);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+  .order-card-body {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

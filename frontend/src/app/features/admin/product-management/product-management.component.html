@@ -1,0 +1,162 @@
+<div class="mgmt-wrapper">
+  <app-page-header title="商品管理">
+    <p subtitle class="page-subtitle fade-up">
+      目前共 {{ summary().total }} 項商品
+      @if (summary().out > 0) {
+        <span class="hint bad">・{{ summary().out }} 項已售完</span>
+      }
+      @if (summary().low > 0) {
+        <span class="hint warn">・{{ summary().low }} 項庫存偏低</span>
+      }
+    </p>
+    @if (!showForm()) {
+      <button (click)="onAddClick()" class="btn-primary">＋ 新增商品</button>
+    }
+  </app-page-header>
+
+  @if (savedMessage(); as msg) {
+    <div class="flash-msg" role="status">{{ msg }}</div>
+  }
+
+  <!-- 編輯表單 -->
+  @if (showForm()) {
+    <div class="form-panel-card">
+      <div class="panel-head">
+        <h3>{{ editingProductId() !== null ? '編輯商品資料' : '上架新商品' }}</h3>
+        <button type="button" (click)="onCancelForm()" class="btn-close" aria-label="關閉表單">✕</button>
+      </div>
+
+      <form [formGroup]="productForm" (ngSubmit)="onSubmitForm()" class="mgmt-form">
+        <div class="form-body">
+          <div class="form-fields">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="name">商品名稱</label>
+                <input id="name" type="text" formControlName="name" placeholder="例：吉依卡哇絨毛玩偶"
+                       [class.error]="invalid('name')" />
+                @if (invalid('name')) { <span class="field-error">請填寫商品名稱</span> }
+              </div>
+
+              <div class="form-group">
+                <label for="categoryId">商品分類</label>
+                <select id="categoryId" formControlName="categoryId" [class.error]="invalid('categoryId')">
+                  <option [ngValue]="null" disabled>請選擇分類⋯</option>
+                  @for (cat of categories(); track cat.id) {
+                    <option [ngValue]="cat.id">{{ cat.name }}</option>
+                  }
+                </select>
+                @if (invalid('categoryId')) { <span class="field-error">請選擇分類</span> }
+              </div>
+
+              <div class="form-group">
+                <label for="price">售價（NT$）</label>
+                <input id="price" type="number" step="1" min="0" formControlName="price" placeholder="590"
+                       [class.error]="invalid('price')" />
+                @if (invalid('price')) { <span class="field-error">售價需大於 0</span> }
+              </div>
+
+              <div class="form-group">
+                <label for="stock">庫存數量</label>
+                <input id="stock" type="number" min="0" formControlName="stock" placeholder="100"
+                       [class.error]="invalid('stock')" />
+                @if (invalid('stock')) { <span class="field-error">庫存不可為負數</span> }
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="imageUrl">商品圖片網址</label>
+              <input id="imageUrl" type="text" formControlName="imageUrl" placeholder="https://⋯/photo.png"
+                     [class.error]="invalid('imageUrl')" />
+              @if (invalid('imageUrl')) { <span class="field-error">請填寫圖片網址</span> }
+            </div>
+
+            <div class="form-group">
+              <label for="description">商品描述</label>
+              <textarea id="description" formControlName="description" rows="3"
+                        placeholder="描述這件商品的特色⋯" [class.error]="invalid('description')"></textarea>
+              @if (invalid('description')) { <span class="field-error">請填寫商品描述</span> }
+            </div>
+          </div>
+
+          <!-- 圖片即時預覽：貼上網址就知道有沒有貼錯 -->
+          <div class="form-preview">
+            <span class="preview-label">圖片預覽</span>
+            <!-- 直接讀表單控制項：computed() 追蹤不到非 signal 的表單值，會卡在第一次的網址 -->
+            <img [src]="productForm.get('imageUrl')?.value || placeholder"
+                 alt="商品圖片預覽" class="preview-img" />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            {{ editingProductId() !== null ? '儲存變更' : '確認上架' }}
+          </button>
+          <button type="button" (click)="onCancelForm()" class="btn-outline">取消</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="toolbar">
+    <input
+      type="search"
+      class="toolbar-search"
+      [ngModel]="keyword()"
+      (ngModelChange)="keyword.set($event)"
+      placeholder="搜尋商品名稱或分類"
+      aria-label="搜尋商品"
+    />
+  </div>
+
+  @if (loading()) {
+    <app-loading-state text="正在讀取商品清單⋯⋯" />
+  } @else if (filteredProducts().length === 0) {
+    <app-empty-state text="找不到符合條件的商品。" [boxed]="true" />
+  } @else {
+    <div class="table-card">
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>圖片</th>
+              <th>商品名稱</th>
+              <th>分類</th>
+              <th>售價</th>
+              <th>庫存</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (prod of filteredProducts(); track prod.id) {
+              <tr>
+                <td class="num">{{ prod.id }}</td>
+                <td>
+                  <img [src]="prod.imageUrl || placeholder" [alt]="prod.name" class="table-thumbnail" />
+                </td>
+                <td class="cell-name">{{ prod.name }}</td>
+                <td>{{ prod.categoryName }}</td>
+                <td class="num price-cell">NT$ {{ prod.price }}</td>
+                <td>
+                  @if (prod.stock === 0) {
+                    <app-status-badge tone="bad" label="已售完" />
+                  } @else if (prod.stock < lowStockThreshold) {
+                    <app-status-badge tone="warn" [label]="'僅剩 ' + prod.stock" />
+                  } @else {
+                    <app-status-badge tone="ok" [label]="prod.stock + ' 件'" />
+                  }
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button (click)="onEditClick(prod)" class="btn-edit">編輯</button>
+                    <button (click)="onDeleteClick(prod)" class="btn-danger">刪除</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,122 @@
+/* =============================================================
+   base.css — 重置、頁面背景、原生元素的預設外觀
+   -------------------------------------------------------------
+   想改「草原背景」（天空、雲、太陽、草丘）就在這個檔案的 body::before。
+   想改 input / button 的預設長相也在這裡。
+   ============================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { background: var(--page); }
+
+body {
+  color: var(--ink);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* -------------------------------------------------------------
+   卡通草原背景：純 CSS，不需要任何圖檔。
+   由下往上疊：三層草丘 → 雲朵 → 太陽 → 天空漸層。
+   固定在視窗上（position: fixed），內容會在草原上方捲動。
+   ------------------------------------------------------------- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background:
+    /* 前後三層連綿草丘（橢圓中心壓在畫面下方，只露出上緣弧線）*/
+    radial-gradient(ellipse 78% 30% at 14% 112%,  #6BA22B 0 99.5%, transparent 100%),
+    radial-gradient(ellipse 66% 26% at 58% 113%,  #7CB63A 0 99.5%, transparent 100%),
+    radial-gradient(ellipse 82% 24% at 104% 111%, #8CC44A 0 99.5%, transparent 100%),
+    /* 雲朵 */
+    radial-gradient(ellipse 110px 34px at 16% 13%, #FFFFFF 0 68%, transparent 70%),
+    radial-gradient(ellipse  74px 24px at 24% 11%, #FFFFFF 0 68%, transparent 70%),
+    radial-gradient(ellipse  92px 28px at 71% 20%, #FFFFFF 0 68%, transparent 70%),
+    radial-gradient(ellipse  60px 20px at 78% 18%, #FFFFFF 0 68%, transparent 70%),
+    radial-gradient(ellipse 130px 36px at 45% 6%,  #FFFFFF 0 68%, transparent 70%),
+    /* 太陽 */
+    radial-gradient(circle 62px at 90% 8%, #FFE79A 0 58%, #FFF3CE 60%, transparent 72%),
+    /* 天空 → 遠處草地 */
+    linear-gradient(180deg, #DCEFFA 0%, #E7F5EF 34%, var(--page) 58%);
+}
+
+a { color: var(--grass-deep); }
+
+/* ---------- 表單元件：手繪外框 ---------- */
+input, select, textarea {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 10px 14px;
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+
+input::placeholder, textarea::placeholder { color: var(--ink-muted); }
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--grass-deep);
+  box-shadow: 0 0 0 3px var(--grass-pale);
+}
+
+input.error, select.error, textarea.error { border-color: var(--bad-ink); }
+
+input:disabled, select:disabled, textarea:disabled {
+  background: var(--surface-sunk);
+  color: var(--ink-muted);
+}
+
+/* ---------- 按鈕基底 ---------- */
+button {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+}
+
+button:hover:not(:disabled) { background: var(--surface-sunk); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+button:focus-visible, a:focus-visible {
+  outline: 3px solid var(--sky-ink);
+  outline-offset: 2px;
+}
+
+/* ---------- 動效總開關 ----------
+   使用者在系統設定關掉動畫時，全站動畫一併失效。
+   typography.css 的文字動畫也受這條保護。 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- 捲軸 ---------- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--page); }
+::-webkit-scrollbar-thumb {
+  background: var(--grass);
+  border-radius: 6px;
+  border: 2px solid var(--page);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--grass-deep); }

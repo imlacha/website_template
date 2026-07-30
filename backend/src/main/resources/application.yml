@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:mysql://db:3306/ecommerce_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:rootpassword}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  jwt:
+    # HMAC-SHA256 簽章金鑰。預設值僅供本機開發，正式環境請用 JWT_SECRET 環境變數覆寫，
+    # 不要把正式金鑰簽入版控。
+    secret: ${JWT_SECRET:9a4f2c8d3b7a1e5f8g9h0i1j2k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+
+logging:
+  level:
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG

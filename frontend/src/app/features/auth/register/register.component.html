@@ -1,0 +1,81 @@
+<div class="auth-header">
+  <h2>建立新帳號</h2>
+  <p>免費註冊，一起加入這片草原</p>
+</div>
+
+@if (errorMessage()) {
+  <div class="error-alert" role="alert">
+    {{ errorMessage() }}
+  </div>
+}
+
+@if (successMessage()) {
+  <div class="success-alert" role="status">
+    {{ successMessage() }}
+  </div>
+}
+
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+  <div class="form-group">
+    <label for="name">姓名</label>
+    <input
+      id="name"
+      type="text"
+      formControlName="name"
+      placeholder="王小明"
+      autocomplete="name"
+      [class.error]="registerForm.get('name')?.touched && registerForm.get('name')?.invalid"
+    />
+    @if (registerForm.get('name')?.touched && registerForm.get('name')?.hasError('required')) {
+      <span class="field-error">請輸入姓名</span>
+    }
+  </div>
+
+  <div class="form-group">
+    <label for="email">電子信箱</label>
+    <input
+      id="email"
+      type="email"
+      formControlName="email"
+      placeholder="you@example.com"
+      autocomplete="email"
+      [class.error]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+    />
+    @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')) {
+      <span class="field-error">請輸入電子信箱</span>
+    }
+    @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')) {
+      <span class="field-error">電子信箱格式不正確</span>
+    }
+  </div>
+
+  <div class="form-group">
+    <label for="password">密碼</label>
+    <input
+      id="password"
+      type="password"
+      formControlName="password"
+      placeholder="••••••••"
+      autocomplete="new-password"
+      [class.error]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+    />
+    @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')) {
+      <span class="field-error">請輸入密碼</span>
+    }
+    @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('minlength')) {
+      <span class="field-error">密碼至少需要 6 個字元</span>
+    }
+  </div>
+
+  <button type="submit" [disabled]="registerForm.invalid || loading()" class="btn-auth">
+    @if (loading()) {
+      建立中⋯
+    } @else {
+      註冊
+    }
+  </button>
+</form>
+
+<div class="auth-footer">
+  <p>已經有帳號了嗎？<a routerLink="/auth/login">前往登入</a></p>
+</div>

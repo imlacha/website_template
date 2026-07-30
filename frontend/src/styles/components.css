@@ -1,0 +1,168 @@
+/* =============================================================
+   components.css — 全站共用的視覺元件 class
+   -------------------------------------------------------------
+   這些 class 是全域的，任何元件的 template 都能直接用，
+   不要在各自的 .component.css 再抄一份。
+
+   對應的 Angular 元件在 src/app/shared/：
+     .status-badge            ← <app-status-badge>
+     .loading-state / .spinner ← <app-loading-state>
+     .empty-state             ← <app-empty-state>
+   純 class（沒有對應元件，直接寫在 template 上）：
+     .card  .btn-primary  .btn-outline  .btn-danger  .data-table
+   ============================================================= */
+
+.card {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+}
+
+/* ---------- 按鈕 ---------- */
+
+/* 主要動作：唯一允許放白字的綠底 */
+.btn-primary {
+  background: var(--grass-deep);
+  color: var(--on-accent);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--line);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #416919;
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--line);
+}
+
+.btn-primary:disabled { box-shadow: none; }
+
+.btn-outline {
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  padding: 9px 20px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.btn-outline:hover:not(:disabled) { background: var(--grass-pale); }
+
+.btn-danger {
+  background: var(--bad-pale);
+  color: var(--bad-ink);
+  border: 2px solid var(--bad-ink);
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.btn-danger:hover:not(:disabled) { background: #F7CFCF; }
+
+/* ---------- 狀態徽章 ----------
+   淺底 + 深字 + 實心圓點。顏色從不單獨表意，一定配文字。 */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+  white-space: nowrap;
+}
+
+.status-badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.status-pending   { background: var(--warn-pale); color: var(--warn-ink); }
+.status-shipped   { background: var(--ship-pale); color: var(--ship-ink); }
+.status-completed { background: var(--ok-pale);   color: var(--ok-ink); }
+.status-cancelled { background: var(--bad-pale);  color: var(--bad-ink); }
+
+/* ---------- 資料表格 ---------- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.data-table th {
+  background: var(--surface-sunk);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--line);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 14px 16px;
+  color: var(--ink);
+  font-size: 14px;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover td { background: var(--grass-pale); }
+
+/* ---------- 讀取中 / 空狀態 ---------- */
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+/* boxed：整頁級的空畫面，套上卡片外框 */
+.empty-state.boxed {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+}
+
+.empty-state svg { color: var(--grass); margin-bottom: 14px; }
+
+.empty-state p { font-size: 16px; font-weight: 700; }
+
+.spinner {
+  border: 3px solid var(--grass-pale);
+  border-top-color: var(--grass-deep);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

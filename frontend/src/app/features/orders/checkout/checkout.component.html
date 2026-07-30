@@ -1,0 +1,56 @@
+<div class="checkout-container">
+  <h2 class="page-title">結帳</h2>
+
+  <div class="checkout-layout">
+    <div class="checkout-form-section">
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="shipping-form">
+        <h3>收件資訊</h3>
+
+        <div class="form-group">
+          <label for="shippingAddress">完整收件地址</label>
+          <textarea
+            id="shippingAddress"
+            formControlName="shippingAddress"
+            rows="4"
+            placeholder="例：新北市板橋區文化路一段 100 號 5 樓"
+            [class.error]="checkoutForm.get('shippingAddress')?.touched && checkoutForm.get('shippingAddress')?.invalid"
+          ></textarea>
+          @if (checkoutForm.get('shippingAddress')?.touched && checkoutForm.get('shippingAddress')?.hasError('required')) {
+            <span class="field-error">請填寫收件地址</span>
+          }
+          @if (checkoutForm.get('shippingAddress')?.touched && checkoutForm.get('shippingAddress')?.hasError('minlength')) {
+            <span class="field-error">地址請填寫完整（至少 10 個字）</span>
+          }
+        </div>
+
+        <button type="submit" [disabled]="checkoutForm.invalid || loading()" class="btn-primary btn-block">
+          @if (loading()) {
+            訂單處理中⋯
+          } @else {
+            確認送出訂單
+          }
+        </button>
+      </form>
+    </div>
+
+    <div class="checkout-recap-section">
+      <div class="recap-card">
+        <h3>訂單明細</h3>
+
+        <div class="recap-items-list">
+          @for (item of cartService.cart().items; track item.productId) {
+            <div class="recap-item">
+              <span class="item-qty-name">{{ item.quantity }} × {{ item.productName }}</span>
+              <span class="item-subtotal">NT$ {{ (item.productPrice * item.quantity).toFixed(2) }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="recap-total-row">
+          <span>應付總額</span>
+          <span>NT$ {{ cartService.cart().totalAmount.toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

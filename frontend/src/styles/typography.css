@@ -1,0 +1,135 @@
+/* =============================================================
+   typography.css — 字體與文字動畫（唯一的文字表現來源）
+   -------------------------------------------------------------
+   想改字體、字級、或文字進場動畫，都在這個檔案。
+   字體檔本身由 index.html 的 <link> 載入（Fredoka + Quicksand），
+   放 <link> 而不用 @import 是因為 @import 會阻擋後續樣式下載。
+
+   Fredoka  → 標題與數字，圓潤帶卡通感
+   Quicksand → 內文，細一點但同樣圓體，兩者搭起來一致
+   ============================================================= */
+
+:root {
+  --font-heading: 'Fredoka', 'Quicksand', 'Noto Sans TC', sans-serif;
+  --font-body:    'Quicksand', 'Noto Sans TC', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 600;   /* 圓體字重輕，600 才撐得起來 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+/* 數字對齊用：表格欄位、座標軸刻度。
+   大型數字（KPI、hero）刻意不用，等寬會讓它看起來鬆散。 */
+.num,
+.data-table .num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* =============================================================
+   文字動畫
+   -------------------------------------------------------------
+   全部是「進場一次」的動畫，不做無限循環，避免閱讀時分心。
+   base.css 有全域的 prefers-reduced-motion 保護，
+   使用者關掉動效時這裡全部會自動失效。
+   ============================================================= */
+
+/* 淡入上浮 —— 內文、副標 */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fade-up .45s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+/* 從左滑入 —— 區塊標題 */
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.slide-in {
+  animation: slide-in .5s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+/* 逐字彈跳 —— 主視覺標題。
+   每個字包一個 .pop-char，用 nth-child 做出接力延遲，
+   像角色一個一個從草叢裡跳出來。 */
+@keyframes pop-char {
+  0%   { opacity: 0; transform: translateY(18px) scale(.7) rotate(-8deg); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.06) rotate(2deg); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+}
+
+.pop-char {
+  display: inline-block;
+  animation: pop-char .52s cubic-bezier(.34, 1.56, .64, 1) both;
+  /* 空白字元要保留寬度，否則 inline-block 會把它吃掉 */
+  white-space: pre;
+}
+
+.pop-char:nth-child(1)  { animation-delay: .00s; }
+.pop-char:nth-child(2)  { animation-delay: .05s; }
+.pop-char:nth-child(3)  { animation-delay: .10s; }
+.pop-char:nth-child(4)  { animation-delay: .15s; }
+.pop-char:nth-child(5)  { animation-delay: .20s; }
+.pop-char:nth-child(6)  { animation-delay: .25s; }
+.pop-char:nth-child(7)  { animation-delay: .30s; }
+.pop-char:nth-child(8)  { animation-delay: .35s; }
+.pop-char:nth-child(9)  { animation-delay: .40s; }
+.pop-char:nth-child(10) { animation-delay: .45s; }
+.pop-char:nth-child(n+11) { animation-delay: .50s; }
+
+/* 滑過時輕輕擺動 —— logo、可愛的小元素 */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25%      { transform: rotate(-3.5deg); }
+  75%      { transform: rotate(3.5deg); }
+}
+
+.wiggle-hover:hover {
+  animation: wiggle .45s ease-in-out;
+}
+
+/* 數值更新時彈一下 —— 儀表板 KPI */
+@keyframes count-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.09); }
+  100% { transform: scale(1); }
+}
+
+.count-pop {
+  animation: count-pop .4s ease-out both;
+}
+
+/* 逐項接力淡入 —— 清單、卡片格線。
+   套在容器上，子項會依序進場。 */
+.stagger > * {
+  animation: fade-up .45s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.stagger > *:nth-child(1) { animation-delay: .02s; }
+.stagger > *:nth-child(2) { animation-delay: .06s; }
+.stagger > *:nth-child(3) { animation-delay: .10s; }
+.stagger > *:nth-child(4) { animation-delay: .14s; }
+.stagger > *:nth-child(5) { animation-delay: .18s; }
+.stagger > *:nth-child(6) { animation-delay: .22s; }
+.stagger > *:nth-child(7) { animation-delay: .26s; }
+.stagger > *:nth-child(n+8) { animation-delay: .30s; }

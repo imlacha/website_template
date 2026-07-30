@@ -1,0 +1,277 @@
+/* 側欄寬度統一由這個變數控制，收合時只改一個值，
+   側欄與內容區的位移自然同步，不會對不齊。 */
+.admin-container {
+  --sidebar-w: 250px;
+  display: flex;
+  min-height: 100vh;
+  background: var(--page);
+}
+
+.admin-container.sidebar-collapsed { --sidebar-w: 68px; }
+
+.admin-sidebar {
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 3px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  overflow: hidden;
+  transition: width .22s cubic-bezier(.4, 0, .2, 1);
+}
+
+.sidebar-header {
+  padding: 16px 14px;
+  border-bottom: 3px dashed var(--line-soft);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: 74px;   /* 對齊右側 admin-header 的高度，兩欄的分隔線才會連成一直線 */
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+/* 收合鈕：常駐在側邊欄，收合後這一欄就只剩它 */
+.sidebar-toggle {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 10px;
+  border: 2px solid var(--line-soft);
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s ease, color .15s ease, transform .22s cubic-bezier(.4, 0, .2, 1);
+}
+
+.sidebar-toggle:hover:not(:disabled) {
+  background: var(--grass-pale);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+/* 收合後箭頭轉向，指回「可以再拉出來」 */
+.sidebar-collapsed .sidebar-toggle { transform: rotate(180deg); }
+
+.logo {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.logo-accent { color: var(--grass-deep); }
+
+.panel-tag {
+  background: var(--sun);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  white-space: nowrap;
+}
+
+.menu-heading {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  letter-spacing: .8px;
+  padding: 0 16px;
+  margin-bottom: 2px;
+}
+
+.sidebar-menu {
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-grow: 1;
+}
+
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  transition: background .15s ease, color .15s ease;
+}
+
+.sidebar-menu a:hover {
+  color: var(--ink);
+  background: var(--surface-sunk);
+}
+
+.sidebar-menu a.active {
+  color: var(--ink);
+  background: var(--grass-pale);
+  border-color: var(--line);
+}
+
+.sidebar-menu svg {
+  color: var(--grass-deep);
+  flex-shrink: 0;
+}
+
+.sidebar-menu a.active svg { color: var(--ink); }
+
+.menu-label { flex-grow: 1; }
+
+.sidebar-footer {
+  padding: 18px 12px;
+  border-top: 3px dashed var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0 4px;
+}
+
+.back-link:hover { color: var(--grass-deep); }
+
+.logout-btn {
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--line);
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13px;
+  width: 100%;
+}
+
+.logout-btn:hover {
+  background: var(--bad-pale);
+  color: var(--bad-ink);
+  border-color: var(--bad-ink);
+}
+
+.admin-main {
+  flex-grow: 1;
+  min-width: 0;
+  margin-left: var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left .22s cubic-bezier(.4, 0, .2, 1);
+}
+
+.admin-header {
+  height: 74px;
+  background: var(--surface);
+  border-bottom: 3px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.admin-header-title {
+  color: var(--ink);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+/* 原本用了未定義的 --accent-gradient，導致底色透明配白字＝看不見 */
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--grass-deep);
+  color: var(--on-accent);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.profile-email {
+  color: var(--ink-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.admin-content {
+  padding: 28px;
+  flex-grow: 1;
+}
+
+/* 收合後這一欄只剩下收合鈕與選單圖示，文字類元素一律藏起來 */
+.sidebar-collapsed .brand,
+.sidebar-collapsed .menu-heading,
+.sidebar-collapsed .menu-label,
+.sidebar-collapsed .back-link span {
+  display: none;
+}
+
+.sidebar-collapsed .sidebar-header { justify-content: center; padding: 16px 0; }
+.sidebar-collapsed .sidebar-menu { padding: 18px 10px; }
+.sidebar-collapsed .sidebar-menu a { justify-content: center; padding: 11px 0; }
+.sidebar-collapsed .back-link { justify-content: center; }
+.sidebar-collapsed .logout-btn { font-size: 11px; padding: 8px 2px; }
+
+/* 窄螢幕預設收合（由元件的 initialCollapsed() 決定），
+   但收合鈕在任何寬度都能用，不再強制鎖死寬度。 */
+@media (max-width: 992px) {
+  .admin-content { padding: 18px; }
+  .profile-info { display: none; }
+  .admin-header { padding: 0 16px; }
+}

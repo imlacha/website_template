@@ -1,0 +1,153 @@
+.mgmt-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.btn-refresh {
+  font-size: 13px;
+  padding: 9px 15px;
+}
+
+/* ---------- 工具列 ---------- */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 2px solid var(--line-soft);
+  background: var(--surface);
+  color: var(--ink-soft);
+}
+
+.filter-tab:hover:not(.active) { background: var(--surface-sunk); }
+
+.filter-tab.active {
+  background: var(--grass-pale);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.tab-count {
+  background: var(--surface-sunk);
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.filter-tab.active .tab-count {
+  background: var(--surface);
+}
+
+.toolbar-search {
+  min-width: 260px;
+  flex-grow: 1;
+  max-width: 340px;
+}
+
+/* ---------- 表格 ---------- */
+.table-card {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+}
+
+.table-scroll { overflow-x: auto; }
+
+.order-id {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+.items-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 170px;
+}
+
+.summary-item {
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.items-total {
+  font-size: 11px;
+  color: var(--ink-muted);
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.total-price {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.address-cell {
+  max-width: 190px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.status-change-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-start;
+}
+
+.status-select {
+  padding: 7px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* 行內回饋，取代 alert()／confirm()：
+   瀏覽器可以關掉原生對話框，但關不掉這個 */
+.row-hint {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  line-height: 1.4;
+}
+
+.row-hint.ok  { color: var(--ok-ink); }
+.row-hint.bad { color: var(--bad-ink); }
+
+/* 更新成功後短暫高亮該列 */
+.row-updated td {
+  background: var(--ok-pale) !important;
+  transition: background .4s ease;
+}
+
+@media (max-width: 760px) {
+  .toolbar-search { max-width: none; }
+}

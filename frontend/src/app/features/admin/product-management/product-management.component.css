@@ -1,0 +1,211 @@
+.mgmt-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* page-subtitle 由 <app-page-header> 提供樣式，這裡只補投影進去的統計文字顏色 */
+.page-subtitle {
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+.hint { font-weight: 700; }
+.hint.bad { color: var(--bad-ink); }
+.hint.warn { color: var(--warn-ink); }
+
+.flash-msg {
+  background: var(--ok-pale);
+  border: 2px solid var(--ok-ink);
+  color: var(--ok-ink);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ---------- 表單 ---------- */
+.form-panel-card {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 22px;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px dashed var(--line-soft);
+  padding-bottom: 13px;
+  margin-bottom: 18px;
+}
+
+.panel-head h3 { font-size: 17px; }
+
+.btn-close {
+  border: 2px solid var(--line-soft);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 14px;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  background: var(--bad-pale);
+  color: var(--bad-ink);
+  border-color: var(--bad-ink);
+}
+
+.mgmt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-body {
+  display: grid;
+  grid-template-columns: 1fr 190px;
+  gap: 22px;
+  align-items: start;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.field-error {
+  color: var(--bad-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.form-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preview-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.preview-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: var(--grass-pale);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  border-top: 2px dashed var(--line-soft);
+  padding-top: 16px;
+}
+
+/* ---------- 工具列與表格 ---------- */
+.toolbar { display: flex; }
+
+.toolbar-search {
+  min-width: 260px;
+  max-width: 340px;
+  flex-grow: 1;
+}
+
+.table-card {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+}
+
+.table-scroll { overflow-x: auto; }
+
+.table-thumbnail {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: var(--grass-pale);
+  border: 2px solid var(--line);
+  padding: 3px;
+  display: block;
+}
+
+.cell-name {
+  font-weight: 700;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.price-cell {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* 讓兩顆操作鈕在表格裡尺寸一致 */
+.action-buttons .btn-danger {
+  padding: 7px 13px;
+  font-size: 12px;
+  border-radius: 10px;
+}
+
+.btn-edit {
+  background: var(--sky-pale);
+  color: var(--ship-ink);
+  border: 2px solid var(--ship-ink);
+  padding: 7px 13px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.btn-edit:hover { background: #CCE0F5; }
+
+@media (max-width: 860px) {
+  .form-body { grid-template-columns: 1fr; }
+  .form-preview { max-width: 190px; }
+  .toolbar-search { max-width: none; }
+}

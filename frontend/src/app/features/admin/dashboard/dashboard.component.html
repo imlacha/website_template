@@ -1,0 +1,290 @@
+<div class="dashboard-wrapper">
+  <app-page-header title="營運總覽" subtitle="今天的草原生意如何？">
+    <button (click)="loadAll()" class="btn-outline btn-refresh">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+      </svg>
+      重新整理
+    </button>
+  </app-page-header>
+
+  @if (loading()) {
+    <app-loading-state text="正在整理營運數據⋯⋯" />
+  } @else if (loadError()) {
+    <app-empty-state text="資料載入失敗，請確認後端服務是否正常。" [boxed]="true">
+      <button (click)="loadAll()" class="btn-primary">重試</button>
+    </app-empty-state>
+  } @else {
+    @if (stats(); as data) {
+
+    <!-- 1. KPI 列：一眼看完最重要的五個數字 -->
+    <div class="kpi-row stagger">
+      <div class="kpi-card kpi-hero">
+        <span class="kpi-label">總營收</span>
+        <span class="kpi-value hero">{{ money(data.totalSales) }}</span>
+        <span class="kpi-detail">
+          @if (revenueDelta(); as delta) {
+            <span class="delta" [class.up]="delta >= 0" [class.down]="delta < 0">
+              {{ delta >= 0 ? '▲' : '▼' }} {{ (delta < 0 ? -delta : delta).toFixed(1) }}%
+            </span>
+            較前 {{ rangeDays() }} 天
+          } @else {
+            不含已取消訂單
+          }
+        </span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-label">有效訂單</span>
+        <span class="kpi-value">{{ data.totalOrders }}</span>
+        <span class="kpi-detail">已排除取消的訂單</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-label">平均客單價</span>
+        <span class="kpi-value">{{ money(avgOrderValue()) }}</span>
+        <span class="kpi-detail">每張有效訂單平均金額</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-label">商品點擊</span>
+        <span class="kpi-value">{{ data.totalClicks }}</span>
+        <span class="kpi-detail">轉換率 {{ (data.conversionRate * 100).toFixed(1) }}%</span>
+      </div>
+
+      <!-- 待處理訂單是唯一「需要動手」的數字，給它一個可點擊的行動入口 -->
+      <a routerLink="/admin/orders" class="kpi-card kpi-action" [class.needs-action]="pendingCount() > 0">
+        <span class="kpi-label">待處理訂單</span>
+        <span class="kpi-value">{{ pendingCount() }}</span>
+        <span class="kpi-detail">
+          {{ pendingCount() > 0 ? '點擊前往處理 →' : '目前沒有待辦，太棒了！' }}
+        </span>
+      </a>
+    </div>
+
+    <!-- 2. 營收趨勢 -->
+    <div class="panel-card">
+      <div class="panel-head">
+        <div>
+          <h3>營收趨勢</h3>
+          <span class="panel-sub">區間合計 {{ money(trendTotal()) }}</span>
+        </div>
+        <div class="range-tabs" role="group" aria-label="選擇統計區間">
+          @for (d of [7, 14, 30]; track d) {
+            <button
+              type="button"
+              class="range-tab"
+              [class.active]="rangeDays() === d"
+              [attr.aria-pressed]="rangeDays() === d"
+              (click)="setRange($any(d))"
+            >{{ d }} 天</button>
+          }
+        </div>
+      </div>
+
+      <div class="chart-frame">
+        <svg [attr.viewBox]="'0 0 ' + W + ' ' + H" class="trend-chart" role="img"
+             aria-label="每日營收折線圖，詳細數值請見下方資料表">
+          <!-- 水平格線與 y 軸刻度 -->
+          @for (t of yTicks(); track t.y) {
+            <line [attr.x1]="padL" [attr.y1]="t.y" [attr.x2]="W - padR" [attr.y2]="t.y" class="grid-line" />
+            <text [attr.x]="padL - 10" [attr.y]="t.y + 4" class="axis-text axis-y">{{ compact(t.value) }}</text>
+          }
+
+          <!-- 面積 + 折線 -->
+          <defs>
+            <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--series-1)" stop-opacity=".26"/>
+              <stop offset="100%" stop-color="var(--series-1)" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path [attr.d]="trendArea()" fill="url(#trendFill)" />
+          <polyline [attr.points]="trendLine()" class="trend-line" />
+
+          <!-- x 軸日期（間隔標示，避免擠在一起） -->
+          @for (p of trend(); track p.label; let i = $index) {
+            @if (i % xTickEvery() === 0 || i === trend().length - 1) {
+              <text [attr.x]="p.x" [attr.y]="H - 12" class="axis-text axis-x">{{ p.label }}</text>
+            }
+          }
+
+          <!-- 游標指示線與端點 -->
+          @if (hoveredPoint(); as hp) {
+            <line [attr.x1]="hp.x" [attr.y1]="padT" [attr.x2]="hp.x" [attr.y2]="padT + plotH" class="crosshair" />
+            <circle [attr.cx]="hp.x" [attr.cy]="hp.y" r="6" class="hover-dot" />
+          }
+
+          <!-- 透明熱區：整條直帶都可觸發，不必精準點在點上 -->
+          @for (p of trend(); track p.label; let i = $index) {
+            <rect
+              [attr.x]="p.x - bandWidth() / 2"
+              [attr.y]="padT"
+              [attr.width]="bandWidth()"
+              [attr.height]="plotH"
+              fill="transparent"
+              (mouseenter)="hoverIndex.set(i)"
+              (mouseleave)="hoverIndex.set(null)"
+            />
+          }
+        </svg>
+
+        @if (hoveredPoint(); as hp) {
+          <div class="chart-tooltip" [style.left.%]="(hp.x / W) * 100">
+            <strong>{{ hp.label }}</strong>
+            <span>營收 {{ money(hp.revenue) }}</span>
+            <span>訂單 {{ hp.orders }} 張</span>
+          </div>
+        }
+      </div>
+
+      <!-- 圖表的表格版本：數值不能只有滑鼠移過去才看得到 -->
+      <details class="table-view">
+        <summary>以表格檢視每日數字</summary>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr><th>日期</th><th>營收</th><th>訂單數</th></tr>
+            </thead>
+            <tbody>
+              @for (p of trend(); track p.label) {
+                <tr>
+                  <td class="num">{{ p.label }}</td>
+                  <td class="num">{{ money(p.revenue) }}</td>
+                  <td class="num">{{ p.orders }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+
+    <!-- 3. 兩欄：狀態分布 + 商品成效 -->
+    <div class="dashboard-panels">
+      <div class="panel-card">
+        <div class="panel-head">
+          <h3>訂單狀態分布</h3>
+          <span class="panel-sub">共 {{ orders().length }} 張</span>
+        </div>
+
+        <ul class="status-bars">
+          @for (s of statusBreakdown(); track s.status) {
+            <li class="status-row">
+              <app-status-badge [status]="s.status" />
+              <div class="bar-track">
+                <div class="bar-fill" [style.width.%]="s.pct"></div>
+              </div>
+              <span class="status-figure num">{{ s.count }} 張 ({{ s.pct.toFixed(0) }}%)</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-head">
+          <h3>熱門商品成效</h3>
+          <span class="panel-sub">依點擊數排序，前 6 名</span>
+        </div>
+
+        <!-- 兩個數列都是次數，共用同一條刻度 -->
+        <div class="legend">
+          <span class="legend-item"><i class="swatch s1"></i>點擊</span>
+          <span class="legend-item"><i class="swatch s2"></i>售出</span>
+        </div>
+
+        @if (topProducts().length === 0) {
+          <p class="panel-empty">還沒有商品資料。</p>
+        } @else {
+          <ul class="perf-list">
+            @for (p of topProducts(); track p.id) {
+              <li class="perf-row">
+                <span class="perf-name" [title]="p.name">{{ p.name }}</span>
+                <div class="perf-bars">
+                  <div class="perf-bar">
+                    <div class="bar-fill s1" [style.width.%]="barPct(p.clicks)"></div>
+                    <span class="bar-value num">{{ p.clicks }}</span>
+                  </div>
+                  <div class="perf-bar">
+                    <div class="bar-fill s2" [style.width.%]="barPct(p.purchases)"></div>
+                    <span class="bar-value num">{{ p.purchases }}</span>
+                  </div>
+                </div>
+                <span class="perf-rate num">{{ (p.purchaseRate * 100).toFixed(1) }}%</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+
+    <!-- 4. 兩欄：庫存警示 + 最新訂單 -->
+    <div class="dashboard-panels">
+      <div class="panel-card">
+        <div class="panel-head">
+          <h3>庫存偏低提醒</h3>
+          <a routerLink="/admin/products" class="panel-link">前往補貨 →</a>
+        </div>
+
+        @if (lowStock().length === 0) {
+          <p class="panel-empty">所有商品庫存都很充足 🌿</p>
+        } @else {
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr><th>商品</th><th>剩餘庫存</th><th>狀態</th></tr>
+              </thead>
+              <tbody>
+                @for (p of lowStock(); track p.id) {
+                  <tr>
+                    <td class="cell-name">{{ p.name }}</td>
+                    <td class="num">{{ p.stock }}</td>
+                    <td>
+                      @if (p.stock === 0) {
+                        <app-status-badge tone="bad" label="已售完" />
+                      } @else {
+                        <app-status-badge tone="warn" label="需補貨" />
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-head">
+          <h3>最新訂單</h3>
+          <a routerLink="/admin/orders" class="panel-link">查看全部 →</a>
+        </div>
+
+        @if (recentOrders().length === 0) {
+          <p class="panel-empty">目前還沒有訂單。</p>
+        } @else {
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr><th>訂單</th><th>時間</th><th>金額</th><th>狀態</th></tr>
+              </thead>
+              <tbody>
+                @for (o of recentOrders(); track o.id) {
+                  <tr>
+                    <td class="num">#{{ o.id }}</td>
+                    <td class="num">{{ o.createdAt | date:'MM/dd HH:mm' }}</td>
+                    <td class="num">{{ money(o.totalAmount) }}</td>
+                    <td>
+                      <app-status-badge [status]="o.status" />
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+    }
+  }
+</div>

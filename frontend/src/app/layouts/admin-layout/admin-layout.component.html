@@ -1,0 +1,79 @@
+<div class="admin-container" [class.sidebar-collapsed]="collapsed()">
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="logo">
+          <span class="logo-accent">吉依卡哇</span>管理系統
+        </div>
+        <span class="panel-tag">管理員</span>
+      </div>
+
+      <!-- 收合鈕就住在側邊欄裡：收合後這一欄只剩它，頂部列不留殘留元素 -->
+      <button
+        type="button"
+        class="sidebar-toggle"
+        (click)="toggleSidebar()"
+        [attr.aria-expanded]="!collapsed()"
+        aria-controls="admin-sidebar"
+        [attr.aria-label]="collapsed() ? '展開側邊選單' : '收合側邊選單'"
+        [title]="collapsed() ? '展開側邊選單' : '收合側邊選單'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+          <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+          <path fill-rule="evenodd" d="M13.354 1.646a.5.5 0 0 1 0 .708L7.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-menu" id="admin-sidebar">
+      <span class="menu-heading">營運總覽</span>
+      <a routerLink="/admin/dashboard" routerLinkActive="active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-grid-1x2" viewBox="0 0 16 16">
+          <path d="M6 1v14H1.5a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 .5-.5zm9 12a.5.5 0 0 1-.5.5H9v-3h5.5a.5.5 0 0 1 .5.5zm0-5a.5.5 0 0 1-.5.5H9V5h5.5a.5.5 0 0 1 .5.5zm-6 7.5v-15h5.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H9v5h5.5a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5H9v2a.5.5 0 0 1-.5.5z"/>
+        </svg>
+        <span class="menu-label">數據分析看板</span>
+      </a>
+
+      <span class="menu-heading">日常維運</span>
+      <a routerLink="/admin/products" routerLinkActive="active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
+          <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.962L10.404 2zm3.564 1.426L5.566 5.008 8 5.982l6.186-2.474zM15.8 5.08a.5.5 0 0 0-.29-.413l-7-2.8a.5.5 0 0 0-.37 0l-7 2.8A.5.5 0 0 0 1 5.5v8a.5.5 0 0 0 .258.433l7 4a.5.5 0 0 0 .484 0l7-4A.5.5 0 0 0 15 13.5v-8a.5.5 0 0 0-.2-.42m-1.77 8.27L8 16.74l-6.03-3.447V6.378L8 8.748l6.03-2.37z"/>
+        </svg>
+        <span class="menu-label">商品上架管理</span>
+      </a>
+      <a routerLink="/admin/orders" routerLinkActive="active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-receipt" viewBox="0 0 16 16">
+          <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27m.218 1.977v12.002l.716-.716a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .802.13l.41.82V2.483l-.41.82a.5.5 0 0 1-.802.13l-.646-.646-.646.646a.5.5 0 0 1-.708 0l-.646-.646-.646.646a.5.5 0 0 1-.708 0l-.646-.646-.646.646a.5.5 0 0 1-.708 0l-.646-.646-.646.646a.5.5 0 0 1-.708 0l-.646-.646-.646.646a.5.5 0 0 1-.802-.13l-.41-.82H2.138zm.607 1.166a.5.5 0 0 0-.41.816l.294.589a.5.5 0 0 0 .41.229h1.162a.5.5 0 0 0 .41-.229l.294-.59a.5.5 0 0 0-.41-.815H2.745zm0 3a.5.5 0 0 0-.41.816l.294.589a.5.5 0 0 0 .41.229h1.162a.5.5 0 0 0 .41-.229l.294-.59a.5.5 0 0 0-.41-.815H2.745zm0 3a.5.5 0 0 0-.41.816l.294.589a.5.5 0 0 0 .41.229h1.162a.5.5 0 0 0 .41-.229l.294-.59a.5.5 0 0 0-.41-.815H2.745zm3.725-5.5a.5.5 0 0 0 0 1h5.06a.5.5 0 0 0 0-1h-5.06zm0 3a.5.5 0 0 0 0 1h5.06a.5.5 0 0 0 0-1h-5.06zm0 3a.5.5 0 0 0 0 1h5.06a.5.5 0 0 0 0-1h-5.06z"/>
+        </svg>
+        <span class="menu-label">訂單審核管理</span>
+      </a>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <a routerLink="/" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+        </svg>
+        <span>回前台商城</span>
+      </a>
+      <button (click)="logout()" class="logout-btn">登出</button>
+    </div>
+  </aside>
+  
+  <div class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-title">專賣店管理後台</div>
+      <div class="admin-profile">
+        <div class="profile-avatar">Admin</div>
+        <div class="profile-info">
+          <span class="profile-name">{{ authService.currentUser()?.name }}</span>
+          <span class="profile-email">{{ authService.currentUser()?.email }}</span>
+        </div>
+      </div>
+    </header>
+    
+    <main class="admin-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
