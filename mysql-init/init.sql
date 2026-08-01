@@ -109,8 +109,8 @@ INSERT INTO `roles` (`id`, `name`) VALUES
 -- user@example.com -> password123
 -- admin@example.com -> admin123
 INSERT INTO `users` (`id`, `email`, `password`, `name`, `enabled`) VALUES
-(1, 'user@example.com', '$2b$10$IYIgB/kMP6q0Gr9sLybrheSdHqmagGaXn/mRxCTh50dXQjuS8AIyy', 'Normal User', 1),
-(2, 'admin@example.com', '$2b$10$ZVed7VLm0BRHAlC5dA5jVOjW6c7oLJ9FetUMDI.mVfTyFU.eZduO.', 'System Administrator', 1);
+(1, 'user@example.com', '$2a$10$IYIgB/kMP6q0Gr9sLybrheSdHqmagGaXn/mRxCTh50dXQjuS8AIyy', 'Normal User', 1),
+(2, 'admin@example.com', '$2a$10$ZVed7VLm0BRHAlC5dA5jVOjW6c7oLJ9FetUMDI.mVfTyFU.eZduO.', 'System Administrator', 1);
 
 -- Map Users to Roles
 INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
